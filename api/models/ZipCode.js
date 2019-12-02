@@ -9,6 +9,7 @@ module.exports = {
 
   attributes: {
     zip_code : { type: 'string', required: true },
+    city : { type: 'string', required: true },
     latitude : { type: 'string', required: true },
     longitude : { type: 'string', required: true }
   },

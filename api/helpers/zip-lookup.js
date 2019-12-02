@@ -6,11 +6,11 @@ module.exports = {
   friendlyName: 'Zip Lookup',
 
 
-  description: 'Query the Latitude and Longitude for a Zip Code from Public Open Data API',
+  description: 'Check for an existing Zip Code record or create one using data from the Zip Code API',
 
 
   inputs: {
-    zipCode : {
+    zip_code : {
       type : 'string',
       required : true,
       example : '01938',
@@ -28,17 +28,31 @@ module.exports = {
 
 
   fn: async function (inputs, exits) {
-    axios.get('https://public.opendatasoft.com/api/records/1.0/search/', {
-      params: {
-        dataset : 'us-zip-code-latitude-and-longitude',
-        q: inputs.zipCode
-      }
-    })
-    .then(function (response) {
-      return exits.success(response.data.records[0]);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+    let zipCode;
+
+    // see if there's already a record stored
+    try {
+      zipCode = await ZipCode.findOne({
+        zip_code: inputs.zip_code
+      });
+    } catch (err) {
+      console.log(err);
+    }
+
+    if ( !zipCode ) {
+      // use ZipLookup Helper
+      let zipData = await sails.helpers.zipApi.with(
+        {
+          zipCode: inputs.zip_code
+        });
+      zipCode = await ZipCode.create({
+        'zip_code' : zipData.fields.zip,
+        'city' : zipData.fields.city,
+        'latitude' : zipData.fields.latitude,
+        'longitude' : zipData.fields.longitude
+      });
+    }
+
+    return exits.success(zipCode);
   }
 };

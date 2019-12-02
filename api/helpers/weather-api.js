@@ -30,12 +30,21 @@ module.exports = {
 
 
   fn: async function (inputs) {
-    console.log([sails.config.darksky_api_key, inputs.latitude, inputs.longitude]);
-    if (sails.config.darksky_api_key) {
-      axios.get(`https://api.darksky.net/forecast/${sails.config.darksky_api_key}/${inputs.latitude},${inputs.longitude}`)
+    if (process.env.darksky_api_key) {
+      axios.get(`https://api.darksky.net/forecast/${process.env.darksky_api_key}/${inputs.latitude},${inputs.longitude}`,{
+          params : {
+            exclude : 'minutely,hourly,flags'
+          }
+        })
         .then(function (response) {
-          console.log(response.data);
-          //return sails.helpers.forecast.with();
+          //console.log(response.data);
+          return sails.helpers.forecastResource.with(
+            {
+              current: response.data.currently,
+              daily: response.data.daily,
+              alerts: response.data.alerts
+            }
+          );
         })
         .catch(function (error) {
           console.log(error);
