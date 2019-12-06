@@ -1,0 +1,36 @@
+<div class="card">
+  <h5 class="card-header">Current Conditions In <%= city %></h5>
+  <div class="card-body">
+    <h5 class="card-title"></h5>
+    <p class="card-text">
+      <% if (current.summary) { %>
+        <%= current.summary %>
+      <% } %>
+    </p>
+    <p>
+      <%= current.temperature %>&deg;F and <%= current.humidity * 100 %>% humidity
+    </p>
+    <p>
+        <%
+          const windBearing = current.windBearing;
+          let windDir = 'N'; // covers (345, 15) magnetic
+          if (windBearing >= 15 && windBearing <= 75) {
+            windDir = 'NE';
+          } else if (windBearing > 75 && windBearing < 120) {
+            windDir = "E";
+          } else if (windBearing >= 120 && windBearing <= 165) {
+            windDir = "SE";
+          } else if (windBearing > 165 && windBearing < 210) {
+            windDir = "S";
+          } else if (windBearing >= 210 && windBearing <= 255) {
+            windDir = "SW";
+          } else if (windBearing > 255 && windBearing < 300) {
+            windDir = "W";
+          } else if (windBearing >= 300 && windBearing <= 345) {
+            windDir = "NW";
+          }
+        %>
+        Winds out of the <%= windDir %> at <%= current.windSpeed %>mph.
+    </p>
+  </div>
+</div>

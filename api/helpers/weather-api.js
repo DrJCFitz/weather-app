@@ -29,25 +29,23 @@ module.exports = {
   },
 
 
-  fn: async function (inputs) {
-    if (process.env.darksky_api_key) {
-      axios.get(`https://api.darksky.net/forecast/${process.env.darksky_api_key}/${inputs.latitude},${inputs.longitude}`,{
+  fn: async function (inputs, exits) {
+    if (sails.config.darksky.api_key) {
+      axios.get(`https://api.darksky.net/forecast/${sails.config.darksky.api_key}/${inputs.latitude},${inputs.longitude}`,{
           params : {
             exclude : 'minutely,hourly,flags'
           }
         })
         .then(function (response) {
-          //console.log(response.data);
-          return sails.helpers.forecastResource.with(
-            {
+          return exits.success({
               current: response.data.currently,
               daily: response.data.daily,
               alerts: response.data.alerts
-            }
-          );
+            });
         })
         .catch(function (error) {
           console.log(error);
+          return exits.error(err);
         });
     }
   }

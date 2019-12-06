@@ -28,6 +28,8 @@ module.exports = {
 
 
   fn: async function (inputs, exits) {
+    const err = {code: 0, message: `Zip Code ${inputs.zipCode} invalid.`}
+
     axios.get('https://public.opendatasoft.com/api/records/1.0/search/', {
       params: {
         dataset : 'us-zip-code-latitude-and-longitude',
@@ -35,10 +37,14 @@ module.exports = {
       }
     })
     .then(function (response) {
-      return exits.success(response.data.records[0]);
+      if (response.data.records.length) {
+        return exits.success(response.data.records[0]);
+      }
+      return exits.error(err);
     })
     .catch(function (error) {
-      console.log(error);
+      //console.log(error);
+      return exits.error(error);
     });
   }
 };

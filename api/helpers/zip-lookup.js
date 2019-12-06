@@ -36,23 +36,24 @@ module.exports = {
         zip_code: inputs.zip_code
       });
     } catch (err) {
-      console.log(err);
+      //console.log(err);
     }
 
     if ( !zipCode ) {
       // use ZipLookup Helper
-      let zipData = await sails.helpers.zipApi.with(
-        {
-          zipCode: inputs.zip_code
+      try {
+        let zipData = await sails.helpers.zipApi(inputs.zip_code);
+        zipCode = await ZipCode.create({
+          'zip_code' : zipData.fields.zip,
+          'city' : zipData.fields.city,
+          'latitude' : zipData.fields.latitude,
+          'longitude' : zipData.fields.longitude
         });
-      zipCode = await ZipCode.create({
-        'zip_code' : zipData.fields.zip,
-        'city' : zipData.fields.city,
-        'latitude' : zipData.fields.latitude,
-        'longitude' : zipData.fields.longitude
-      });
+      } catch (err) {
+        //console.log(err);
+        return exits.error(err);
+      }
     }
-
     return exits.success(zipCode);
   }
 };

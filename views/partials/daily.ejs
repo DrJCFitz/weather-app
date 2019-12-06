@@ -1,0 +1,45 @@
+<div class="accordion" id="daily-reports">
+<% _.each(reports.data, function(daily){ %>
+  <div class="card">
+    <div class="card-header" id="<%=`daily-${daily.time}`%>">
+      <h2 class="mb-0">
+        <button class="btn btn-light" type="button" data-toggle="collapse" data-target="<%= `#details-${daily.time}` %>" aria-expanded="true" aria-controls="<%= `#details-${daily.time}` %>">
+          <span style="float:left;"><strong><%= (new Date(daily.time * 1000)).toDateString(); %></strong></span>
+          <span style="padding-left:2em;">High: <%= daily.temperatureHigh %>&deg;F&nbsp;/&nbsp;Low: <%= daily.temperatureLow %>&deg;F</span>
+        </button>
+      </h2>
+    </div>
+    <div id="<%= `details-${daily.time}` %>" class="collapse" aria-labelledby="<%=`#daily-${daily.time}`%>" data-parent="#daily-reports">
+      <div class="card-body">
+        <p><%= daily.summary %></p>
+        <p><%= daily.temperatureHigh %>&deg;F/<%= daily.temperatureLow %>&deg;F</p>
+        <p><%= daily.humidity * 100 %>% humidity with <%= daily.precipProbability * 100 %>% chance of <%= daily.precipType %>.</p>
+        <%
+          const windBearing = daily.windBearing;
+          let windDir = 'N'; // covers (345, 15) magnetic
+          if (windBearing >= 15 && windBearing <= 75) {
+            windDir = 'NE';
+          } else if (windBearing > 75 && windBearing < 120) {
+            windDir = "E";
+          } else if (windBearing >= 120 && windBearing <= 165) {
+            windDir = "SE";
+          } else if (windBearing > 165 && windBearing < 210) {
+            windDir = "S";
+          } else if (windBearing >= 210 && windBearing <= 255) {
+            windDir = "SW";
+          } else if (windBearing > 255 && windBearing < 300) {
+            windDir = "W";
+          } else if (windBearing >= 300 && windBearing <= 345) {
+            windDir = "NW";
+          }
+        %>
+        <p>Winds out of the <%= windDir%> at <%= daily.windSpeed %>mph with gusts up to <%= daily.windGust %>mph.</p>
+        <% let sunriseTime = (new Date(daily.sunriseTime)),
+          sunsetTime = (new Date(daily.sunsetTime));
+        %>
+        <p>Sunrise: <%= `${sunriseTime.getHours()}:${sunriseTime.getMinutes()}` %>AM, Sunset: <%= `${sunsetTime.getHours()}:${sunsetTime.getMinutes()}` %>PM</p>
+      </div>
+    </div>
+  </div>
+<% }); %>
+</div>

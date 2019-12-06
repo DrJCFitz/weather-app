@@ -20,9 +20,9 @@ module.exports.routes = {
   ***************************************************************************/
 
   // display some default index data
-  'get /': { view: 'pages/index' },
+  'get /': 'IndexController.index',
 
   // use search route to get weather for a Zip Code
-  'post /search': 'SearchController.index',
+  'post /search': 'IndexController.search',
 
 };

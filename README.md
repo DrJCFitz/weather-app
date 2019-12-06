@@ -1,26 +1,44 @@
 # weather-app
 
-a [Sails v1](https://sailsjs.com) application
+A [Sails v1](https://sailsjs.com) application
 
+Demo the app: `cd weather-app && sails lift`
+Test the app:
+```
+./node_modules/mocha/bin/mocha ./test/controller.indexcontroller.js
+./node_modules/bin/mocha ./test/helper.zip-lookup.js
+```
 
-### Links
+Goal of the application is to allow searching for weather by zip code and displaying results using the DarkSky API.
 
-+ [Sails framework documentation](https://sailsjs.com/get-started)
-+ [Version notes / upgrading](https://sailsjs.com/documentation/upgrading)
-+ [Deployment tips](https://sailsjs.com/documentation/concepts/deployment)
-+ [Community support options](https://sailsjs.com/support)
-+ [Professional / enterprise options](https://sailsjs.com/enterprise)
+## Considerations
 
+* DarkSky API accepts latitude, longitude arguments in query
+  * Use of another API may be necessary to translate zip code input to latitude, longitude
+* If there is a need to look up the zip code, it may be good to use some sort of persistence (db, disk cache) to avoid repeated calls
+* Functionality related to API calls should be extracted into a service layer
+* Tests should cover the ability of the service layer to return data
+* DarkSky API key should be stored in a server-side configuration file or within an environment variable, not committed to repository
 
-### Version info
+## Layout and design
 
-This app was originally generated on Sun Dec 01 2019 14:15:07 GMT-0500 (Eastern Standard Time) using Sails v1.2.3.
+* Web application initially loads current forecast information for 5 select zip codes across the contiguous US
+  * San Diego, CA
+  * Seattle, WA
+  * Denver, CO
+  * Portland, ME
+  * Miami, FL
+* Submission (POST) to backend handled by controller method
+  * Backend services (SailsJS helpers) leveraged to
+    * query/store the information for a zip code, city, latitude, and longitude
+    * API call for zip code lookup
+    * API call for weather forecast
+* Result data may be displayed on a separate page, traditional MVC
 
-<!-- Internally, Sails used [`sails-generate@1.16.13`](https://github.com/balderdashy/sails-generate/tree/v1.16.13/lib/core-generators/new). -->
+## Enhancements
 
-
-
-<!--
-Note:  Generators are usually run using the globally-installed `sails` CLI (command-line interface).  This CLI version is _environment-specific_ rather than app-specific, thus over time, as a project's dependencies are upgraded or the project is worked on by different developers on different computers using different versions of Node.js, the Sails dependency in its package.json file may differ from the globally-installed Sails CLI release it was originally generated with.  (Be sure to always check out the relevant [upgrading guides](https://sailsjs.com/upgrading) before upgrading the version of Sails used by your app.  If you're stuck, [get help here](https://sailsjs.com/support).)
--->
-
+* Implement VueJS Single Page app
+  * axios call to backend API endpoint, consume JSON result
+  * refresh page data
+* Experiment with different taskrunner pipelines (Gulp)
+  * SailsJS defaults to Grunt

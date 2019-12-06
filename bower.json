@@ -1,0 +1,17 @@
+{
+  "name": "weather-app",
+  "description": "a Sails application",
+  "main": "app.js",
+  "authors": [
+    "john"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/DrJCFitz/weather-app",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
